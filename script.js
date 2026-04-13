@@ -1,5 +1,5 @@
 /**
- * script.js - Todo Phase 3: The Status
+ * script.js - Todo Phase 4: Keyboard Shortcuts
  * Internal state is managed via an array of objects.
  * UI is updated by re-rendering the task list based on that state.
  */
@@ -69,6 +69,16 @@ function render() {
                 <button class="delete-btn">Delete</button>
             </div>
         `;
+
+        // Shortcut: Enter key on focused checkbox
+        const checkbox = li.querySelector('.status-checkbox');
+        checkbox.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent accidental form submission
+                toggleTodo(todo.id);
+            }
+        });
+
         list.appendChild(li);
     });
 }
@@ -149,6 +159,16 @@ function editTodo(id) {
     // Focus the new input field
     const input = li.querySelector('.edit-input');
     input.focus();
+
+    // Keydown listener for inline edit save/cancel
+    input.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            saveEdit(id, input.value);
+        } else if (event.key === 'Escape') {
+            editingId = null;
+            render();
+        }
+    });
 }
 
 /**
@@ -178,6 +198,15 @@ document.getElementById('submit-btn').addEventListener('click', submitAdd);
 // 3. Listener for 'Cancel'
 document.getElementById('cancel-btn').addEventListener('click', () => {
     toggleState('view');
+});
+
+// 3.1 Keyboard shortcuts for 'Add Mode'
+document.getElementById('todo-input').addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        submitAdd();
+    } else if (event.key === 'Escape') {
+        toggleState('view');
+    }
 });
 
 // 4. Modal listeners
